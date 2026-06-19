@@ -1,8 +1,31 @@
+import { Route, Routes } from 'react-router-dom'
+import HomePage from './pages/HomePage'
+import ProductsPage from './pages/ProductsPage'
+import ProductDetailPage from './pages/ProductDetailPage'
+import CartPage from './pages/CartPage'
+import LoginPage from './pages/LoginPage'
+import Navbar from './components/Navbar'
+import ProtectedRoute from './components/ProtectedRoute'
+
 function App() {
   return (
-    <main>
-      <h1>E-Commerce</h1>
-    </main>
+    <>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/products" element={<ProductsPage />} />
+        <Route path="/products/:id" element={<ProductDetailPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <CartPage />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </>
   )
 }
 
