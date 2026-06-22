@@ -1,17 +1,17 @@
 import type { ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
-// Fake auth for now — flip to true to test, replace on Day 8
-const isAuthenticated = false
-
-type ProtectedRouteProps = {
+type ProtectedRouteProps = { // type for the props that the ProtectedRoute component will receive
   children: ReactNode
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
+  const { isAuthenticated } = useAuth() // destructuring to get isAuthenticated from the useAuth hook
+
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/login" replace /> 
   }
 
-  return children
+  return children // return the children components
 }
