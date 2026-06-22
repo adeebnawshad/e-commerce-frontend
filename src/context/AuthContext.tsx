@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, type ReactNode } from 'react'
-// Context is a way to pass data through the component tree without having to pass props down manually at every level.
+import { getToken, removeToken, setToken } from '../utils/token'
+
 type AuthContextType = {
   isAuthenticated: boolean
-  login: () => void
+  login: (token: string) => void
   logout: () => void
 }
 
@@ -13,13 +14,15 @@ type AuthProviderProps = {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(() => !!getToken()) // !! converts a value to a boolean (true if there is a token, false if there is not), getToken() runs once when the component first mounts // rebuild React state from saved token
 
-  function login() {
+  function login(token: string) {
+    setToken(token)
     setIsAuthenticated(true)
   }
 
   function logout() {
+    removeToken()
     setIsAuthenticated(false)
   }
 
