@@ -1,6 +1,8 @@
 import { useState, type SubmitEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { loginUser } from '../api/auth'
+import Button from '../components/ui/Button'
+import Input from '../components/ui/Input'
 import { useAuth } from '../context/AuthContext'
 
 export default function LoginPage() {
@@ -20,7 +22,7 @@ export default function LoginPage() {
     try {
       const response = await loginUser(email, password)
       login(response.token)
-      navigate('/cart')
+      navigate('/dashboard')
     } catch {
       setError('Invalid email or password')
     } finally {
@@ -29,37 +31,33 @@ export default function LoginPage() {
   }
 
   return (
-    <div>
+    <div className="auth-page">
       <h1>Login</h1>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <Input
+          id="email"
+          label="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
 
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
+        <Input
+          id="password"
+          label="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
 
-        {error && <p>{error}</p>}
+        {error && <p className="error">{error}</p>}
 
-        <button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading}>
           {loading ? 'Logging in...' : 'Log in'}
-        </button>
+        </Button>
       </form>
     </div>
   )

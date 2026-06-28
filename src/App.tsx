@@ -1,17 +1,17 @@
 import { Route, Routes } from 'react-router-dom'
-import HomePage from './pages/HomePage'
-import ProductsPage from './pages/ProductsPage'
-import ProductDetailPage from './pages/ProductDetailPage'
-import CartPage from './pages/CartPage'
-import LoginPage from './pages/LoginPage'
-import Navbar from './components/Navbar'
+import Layout from './components/layout/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
+import CartPage from './pages/CartPage'
+import DashboardPage from './pages/DashboardPage'
+import HomePage from './pages/HomePage'
+import LoginPage from './pages/LoginPage'
+import ProductDetailPage from './pages/ProductDetailPage'
+import ProductsPage from './pages/ProductsPage'
 
 function App() {
   return (
-    <>
-      <Navbar />
-      <Routes>
+    <Routes>
+      <Route element={<Layout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/products/:id" element={<ProductDetailPage />} />
@@ -24,8 +24,16 @@ function App() {
             </ProtectedRoute>
           }
         />
-      </Routes>
-    </>
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+    </Routes>
   )
 }
 
