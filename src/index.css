@@ -163,3 +163,42 @@ a {
     grid-template-columns: 1fr;
   }
 }
+
+.cart-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 1rem;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.cart-item h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.1rem;
+}
+
+.cart-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cart-line-total {
+  margin: 0;
+  font-weight: 700;
+}
+
+.cart-total {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
