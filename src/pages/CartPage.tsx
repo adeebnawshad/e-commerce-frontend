@@ -54,6 +54,10 @@ export default function CartPage() {
       </ul>
 
       <p className="cart-total">Total: ${cartTotal.toFixed(2)}</p>
+
+      <Link to="/checkout">
+        <Button type="button">Proceed to checkout</Button>
+      </Link>
     </div>
   )
 }
