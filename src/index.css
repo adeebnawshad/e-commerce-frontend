@@ -202,3 +202,40 @@ a {
   font-size: 1.25rem;
   font-weight: 700;
 }
+
+.checkout-summary,
+.checkout-form {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1.5rem;
+}
+
+.checkout-summary h2,
+.checkout-form h2 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+}
+
+.summary-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+
+.summary-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.checkout-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+}
