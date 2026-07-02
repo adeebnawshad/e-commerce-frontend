@@ -1,22 +1,19 @@
-type LoginResponse = {
+import api from './axios'
+
+type LoginResponse = { // type of the response body
   token: string
 }
 
-const MOCK_USER = {
-  email: 'test@test.com',
-  password: 'password',
-}
-
+// Fake Store test user — see https://fakestoreapi.com/docs
 export async function loginUser(
-  email: string,
+  username: string,
   password: string,
 ): Promise<LoginResponse> {
-  // Simulate network delay
-  await new Promise((resolve) => setTimeout(resolve, 500))
+  // sends a login request to Fake Store and pulls the response body out of Axios's result
+  const { data } = await api.post<LoginResponse>('/auth/login', { // because of baseURL in axios.ts, the request URL is https://fakestoreapi.com/auth/login
+    username,
+    password,
+  })
 
-  if (email === MOCK_USER.email && password === MOCK_USER.password) {
-    return { token: 'fake-jwt-token-123' }
-  }
-
-  throw new Error('Invalid email or password')
+  return data
 }

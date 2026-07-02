@@ -1,8 +1,10 @@
 import { useState, type SubmitEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { submitCart } from '../api/carts'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import { useCart } from '../context/CartContext'
+import { addCheckoutRecord } from '../utils/checkoutHistory'
 
 export default function CheckoutPage() {
   const { items, cartTotal } = useCart()
@@ -12,19 +14,26 @@ export default function CheckoutPage() {
   const [email, setEmail] = useState('')
   const [address, setAddress] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  if (items.length === 0) { // if the cart is empty, redirect to the cart page as a guard to prevent users from accessing the checkout page if the cart is empty.
+  if (items.length === 0) {
     return <Navigate to="/cart" replace />
   }
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
+    setError('')
     setLoading(true)
 
-    // Simulate checkout API call
-    await new Promise((resolve) => setTimeout(resolve, 500))
-
-    navigate('/checkout/success', { replace: true }) // without replace, history after checkout: /cart  →  /checkout  →  /checkout/success, with replace: true, history after checkout: /cart  →  /checkout/success (/checkout is removed from the history) // Why do we want to change the history? To prevent the user from going back to the checkout page after checkout success.
+    try {
+      await submitCart(items)
+      addCheckoutRecord(items.length, cartTotal)
+      navigate('/checkout/success', { replace: true })
+    } catch {
+      setError('Could not place your order. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -73,6 +82,8 @@ export default function CheckoutPage() {
           onChange={(e) => setAddress(e.target.value)}
           required
         />
+
+        {error && <p className="error">{error}</p>}
 
         <div className="checkout-actions">
           <Link to="/cart">← Back to cart</Link>

@@ -9,7 +9,7 @@ export default function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
 
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -20,11 +20,11 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const response = await loginUser(email, password)
+      const response = await loginUser(username, password)
       login(response.token)
       navigate('/dashboard')
     } catch {
-      setError('Invalid email or password')
+      setError('Invalid username or password')
     } finally {
       setLoading(false)
     }
@@ -33,14 +33,16 @@ export default function LoginPage() {
   return (
     <div className="auth-page">
       <h1>Login</h1>
+      <p className="page-intro">
+        Demo account: <strong>johnd</strong> / <strong>m38rmF$</strong>
+      </p>
 
       <form className="auth-form" onSubmit={handleSubmit}>
         <Input
-          id="email"
-          label="Email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          id="username"
+          label="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           required
         />
 
