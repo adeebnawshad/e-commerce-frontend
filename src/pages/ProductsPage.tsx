@@ -1,28 +1,83 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { fetchProducts } from '../api/products'
 import Card from '../components/ui/Card'
 import Input from '../components/ui/Input'
-import { getCategories, products } from '../data/products'
+import type { Product } from '../data/products'
+import { getCategories } from '../data/products'
 
 export default function ProductsPage() {
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('all')
 
-  const categories = getCategories()
+  useEffect(() => {
+    let cancelled = false
 
-  const filteredProducts = useMemo(() => { // filters the product list based on search text and category, and only recaluclates when those inputs change
+    async function loadProducts() {
+      setLoading(true)
+      setError('')
+
+      try {
+        const data = await fetchProducts()
+
+        if (!cancelled) {
+          setProducts(data)
+        }
+      } catch {
+        if (!cancelled) {
+          setError('Could not load products. Please try again.')
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false)
+        }
+      }
+    }
+
+    loadProducts()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const categories = getCategories(products)
+
+  const filteredProducts = useMemo(() => {
     const query = search.trim().toLowerCase()
 
     return products.filter((product) => {
-      const matchesCategory = category === 'all' || product.category === category // checks if the product category matches the selected category
+      const matchesCategory =
+        category === 'all' || product.category === category
       const matchesSearch =
-        query === '' || // if the search query is empty, all products match
+        query === '' ||
         product.name.toLowerCase().includes(query) ||
         product.description.toLowerCase().includes(query)
 
-      return matchesCategory && matchesSearch // returns true if the product matches the category and search query
+      return matchesCategory && matchesSearch
     })
-  }, [search, category]) // re-runs the function when the search or category changes
+  }, [products, search, category])
+
+  if (loading) {
+    return (
+      <div>
+        <h1>Products</h1>
+        <p>Loading products...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div>
+        <h1>Products</h1>
+        <p className="error">{error}</p>
+      </div>
+    )
+  }
 
   return (
     <div>

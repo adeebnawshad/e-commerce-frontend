@@ -1,14 +1,61 @@
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { fetchProductById } from '../api/products'
 import Button from '../components/ui/Button'
 import { useCart } from '../context/CartContext'
-import { getProductById } from '../data/products'
+import type { Product } from '../data/products'
 
 export default function ProductDetailPage() {
   const { id } = useParams()
   const { addToCart } = useCart()
-  const product = id ? getProductById(id) : undefined
+  const [product, setProduct] = useState<Product | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [notFound, setNotFound] = useState(false)
 
-  if (!product) {
+  useEffect(() => {
+    if (!id) {
+      setLoading(false)
+      setNotFound(true)
+      return
+    }
+
+    let cancelled = false
+    const productId = id
+
+    async function loadProduct() {
+      setLoading(true)
+      setNotFound(false)
+
+      try {
+        const data = await fetchProductById(productId)
+
+        if (!cancelled) {
+          setProduct(data)
+        }
+      } catch {
+        if (!cancelled) {
+          setProduct(null)
+          setNotFound(true)
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false)
+        }
+      }
+    }
+
+    loadProduct()
+
+    return () => {
+      cancelled = true
+    }
+  }, [id])
+
+  if (loading) {
+    return <p>Loading product...</p>
+  }
+
+  if (notFound || !product) {
     return (
       <div>
         <h1>Product not found</h1>

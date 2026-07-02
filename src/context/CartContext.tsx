@@ -2,11 +2,15 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react'
 import type { Product } from '../data/products'
+import { loadCart, saveCart } from '../utils/cartStorage'
+import { getUserIdFromToken } from '../utils/token'
 
 export type CartItem = {
   // Just the shape of one item in the cart.
@@ -35,7 +39,25 @@ type CartProviderProps = {
 
 // the Provider component that wraps the app and provides the cart data to the components that need it. Wraps the app. <App /> is children.
 export function CartProvider({ children }: CartProviderProps) {
-  const [items, setItems] = useState<CartItem[]>([])
+  const userId = getUserIdFromToken()
+  const skipSaveRef = useRef(false)
+  const [items, setItems] = useState<CartItem[]>(() => loadCart(getUserIdFromToken()))
+
+  // When a different user logs in, load that user's saved cart
+  useEffect(() => {
+    skipSaveRef.current = true
+    setItems(loadCart(userId))
+  }, [userId])
+
+  // Persist cart changes for the current user
+  useEffect(() => {
+    if (skipSaveRef.current) {
+      skipSaveRef.current = false
+      return
+    }
+
+    saveCart(userId, items)
+  }, [items, userId])
 
   const addToCart = useCallback((product: Product) => {
     setItems((currentItems) => {
